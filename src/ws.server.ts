@@ -2,27 +2,49 @@ import { WebSocket, WebSocketServer } from 'ws'
 import { nanoid } from 'nanoid'
 import { IncomingMessage } from 'http'
 
-export const sids = new Map() // adding "the-room" to the Set identified by the socket ID
-export const rooms: Map<string, Set<string>> = new Map<string, Set<string>>() // adding the socket ID in the Set identified by the string "the-room"
+export const sids: Map<string, Set<string>> = new Map() // adding "the-room" to the Set identified by the socket ID
+export const rooms: Map<string, Set<string>> = new Map() // adding the socket ID in the Set identified by the string "the-room"
 
 class CustomWebSocket extends WebSocket {
   id: string = nanoid(8)
 
   join(room: string) {
-    if (rooms.has(room)) {
-      rooms.get(room)?.add(this.id)
-    } else {
+    this.joinSids(room)
+
+    if (!rooms.has(room)) {
       rooms.set(room, new Set())
       rooms.get(room)?.add(this.id)
     }
+
+    rooms.get(room)?.add(this.id)
+  }
+
+  joinSids(room: string) {
+    if (!sids.has(this.id)) {
+      sids.set(this.id, new Set())
+      sids.get(this.id)?.add(room)
+    }
+
+    sids.get(this.id)?.add(room)
   }
 
   leave(room: string) {
+    this.leaveSids(room)
     if (rooms.has(room)) {
       rooms.get(room)?.delete(this.id)
 
       if (!rooms.get(room)?.size) {
         rooms.delete(room)
+      }
+    }
+  }
+
+  leaveSids(room: string) {
+    if (sids.has(this.id)) {
+      sids.get(this.id)?.delete(room)
+
+      if (!sids.get(this.id)?.size) {
+        sids.delete(this.id)
       }
     }
   }
@@ -49,14 +71,16 @@ const wss: WebSocketServer = new WebSocketServer<CustomWebSocket>({
 wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any) => {
   ws.id = nanoid(8)
 
-  setTimeout(() => {
-    if (client.id) {
-      ws.join(`u:${client.id}`)
-    } else {
-      ws.join('users')
-    }
-    console.log(rooms)
-  }, 1000)
+  /**
+   * User join the room with user id
+   */
+  if (client.id) {
+    ws.join(`u:${client.id}`)
+    console.log('Authenticated user joined.')
+  } else {
+    ws.join('users')
+  }
+  console.log(rooms)
 
   // sids.set(ws.id, new Set().add('room1').add('room2'))
   // console.log(sids.get(ws.id))
@@ -68,12 +92,16 @@ wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any
 
   ws.on('watch', (data) => {
     const { subscribe, unsubscribe } = data
+
     if (subscribe) {
       ws.join(subscribe)
+      console.log('Subscribe to the room')
+      console.log(rooms)
     }
 
     if (unsubscribe) {
       ws.leave(unsubscribe)
+      console.log('Unsubscribe to the room')
     }
   })
 
@@ -86,7 +114,11 @@ wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any
       rooms.get('home')?.delete(ws.id)
     }
 
+    console.log(sids)
+
+    console.log('Aktif soketler --- START')
     console.log(rooms)
+    console.log('Aktif soketler --- END')
     // console.log('socket is disconnect')
     /*		Object.keys(rooms).forEach((value, index) => {
       const room = rooms[value]

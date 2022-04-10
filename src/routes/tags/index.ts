@@ -3,9 +3,6 @@ import { Tag } from '@shared/tag.model'
 import { QueryConfig } from 'pg'
 
 export default async (app: FastifyInstance) => {
-  /**
-   * @api {get} /tags Get all tags
-   */
   app.get(
     '/',
     {

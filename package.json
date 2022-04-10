@@ -1,14 +1,14 @@
 {
-  "name": "qa_app_server",
-  "version": "1.0.0",
-  "description": "Fastify Example",
+  "name": "inek-dev-server",
+  "version": "0.1.0",
+  "description": "Inek.dev Node.js Server",
   "private": true,
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.ts",
+    "build": "tsc",
     "start": "node dist/server.js",
-    "build": "tsc"
+    "dev": "nodemon src/server.ts"
   },
   "keywords": [],
   "author": "Olcay USTA",
