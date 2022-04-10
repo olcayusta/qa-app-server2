@@ -30,7 +30,7 @@ export default async (app: FastifyInstance) => {
       },
       preValidation: [app.authenticate]
     },
-    async function({ body, user }) {
+    async function({ body, user }): Promise<Answer> {
       const { content, questionId } = body
       const { sub: userId } = user
       const query: QueryConfig = {
@@ -38,9 +38,14 @@ export default async (app: FastifyInstance) => {
           WITH cte AS (
             INSERT INTO question_answer (content, "userId", "questionId")
               VALUES ($1, $2, $3)
-              RETURNING "questionId"
+              RETURNING id, content, "creationTime", "userId", "questionId", "rawContent"
           )
-          SELECT "questionId",
+          SELECT id,
+                 content,
+                 "creationTime",
+                 "userId",
+                 "questionId",
+                 "rawContent",
                  (
                    SELECT "userId"
                    FROM question q
@@ -52,12 +57,7 @@ export default async (app: FastifyInstance) => {
       }
 
       try {
-        const { rows } = await app.pg.query<{
-          questionId: number
-          receiverId: number
-        }>(query)
-
-        const { receiverId } = rows[0]
+        const { rows: [{receiverId, ...room}] } = await app.pg.query<Answer>(query)
 
         wss.clients.forEach((ws) => {
           // TODO: Soruyu okuyanlara bildirim gonder
@@ -87,7 +87,7 @@ export default async (app: FastifyInstance) => {
           }
         })
 
-        return rows[0]
+        return room
       } catch (e) {
         throw e
       }
