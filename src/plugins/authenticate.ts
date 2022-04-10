@@ -1,8 +1,8 @@
 import fp from 'fastify-plugin'
-import fastifyJwt from 'fastify-jwt'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import fastifyJwt from 'fastify-jwt'
 
-export default fp(async function(app: FastifyInstance) {
+export default fp(async (app: FastifyInstance) => {
   app.register(fastifyJwt, {
     secret: process.env.SUPER_SECRET_KEY!,
     sign: {

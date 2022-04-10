@@ -1,9 +1,10 @@
 import fp from 'fastify-plugin'
+import { FastifyInstance } from 'fastify'
 import webPush, { PushSubscription } from 'web-push'
 
 const subscriptions: PushSubscription[] = []
 
-export default fp(async (app) => {
+export default fp(async (app: FastifyInstance) => {
 	webPush.setVapidDetails(
 		'mailto:you@domain.com',
 		process.env.PUBLIC_VAPID!,
@@ -12,9 +13,8 @@ export default fp(async (app) => {
 
 	app.post<{
     Body: PushSubscription
-  }>('/subscription', async (req) => {
-		const subscription = req.body
-		subscriptions.push(subscription)
+  }>('/subscription', async ({ body }) => {
+		subscriptions.push(body)
 	})
 
 	app.get('/api/trigger-push-msg', async () => {

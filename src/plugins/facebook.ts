@@ -1,6 +1,6 @@
-import fastifyOauth2 from 'fastify-oauth2'
 import fp from 'fastify-plugin'
 import { FastifyInstance } from 'fastify'
+import fastifyOauth2 from 'fastify-oauth2'
 
 export default fp(async (app: FastifyInstance) => {
   app.register(fastifyOauth2, {
