@@ -1,8 +1,8 @@
 import fp from 'fastify-plugin'
 import { FastifyInstance } from 'fastify'
-import fastifyOauth2 from 'fastify-oauth2'
+import fastifyOauth2, { FastifyOAuth2Options } from 'fastify-oauth2'
 
-export default fp(async (app: FastifyInstance) => {
+export default fp<FastifyOAuth2Options>(async (app: FastifyInstance) => {
   app.register(fastifyOauth2, {
     name: 'facebookOAuth2',
     scope: ['user:email'],

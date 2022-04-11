@@ -39,6 +39,4 @@ app.register(fastifyAutoload, {
   routeParams: true
 })
 
-export {
-  app
-}
+export { app }
