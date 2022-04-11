@@ -16,8 +16,7 @@ export default async (app: FastifyInstance) => {
     },
     async function ({ body, user }, reply: FastifyReply): Promise<Comment> {
       const { content, questionId } = body
-      const { sub } = user
-      const userId = Number(sub)
+      const userId = user.id
 
       const markedContent = marked.parseInline(content)
 

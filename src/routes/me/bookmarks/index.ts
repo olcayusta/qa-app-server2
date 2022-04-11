@@ -1,4 +1,6 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyReply } from 'fastify'
+import { QueryConfig } from 'pg'
+import { Question } from '@shared/question.model'
 
 export default async (app: FastifyInstance) => {
   app.addHook('onRequest', app.authenticate)
@@ -24,9 +26,8 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async (req, reply) => {
-      const userId = Number(req.user.sub)
-      const query = {
+    async function ({ user: { id: userId } }, reply: FastifyReply): Promise<Question[]> {
+      const query: QueryConfig = {
         text: `
           SELECT q.id, q.title
           FROM question q
@@ -36,8 +37,8 @@ export default async (app: FastifyInstance) => {
         values: [userId]
       }
       try {
-        const { rows } = await app.pg.query(query)
-        return rows ?? reply.notFound()
+        const { rows: questions } = await app.pg.query<Question>(query)
+        return questions ?? reply.notFound()
       } catch (e) {
         throw e
       }
@@ -63,10 +64,9 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async ({ user, body }, reply) => {
-      const userId = Number(user.sub)
+    async function ({ user: { id: userId }, body }, reply: FastifyReply) {
       const { questionId } = body
-      const query = {
+      const query: QueryConfig = {
         text: `
           INSERT INTO user_favorite_questions("questionId", "userId")
           VALUES ($1, $2)

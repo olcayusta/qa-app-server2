@@ -103,7 +103,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function(): Promise<Question[]> {
+    async function (): Promise<Question[]> {
       const queryText = `
         SELECT q.id,
                q.title,
@@ -162,7 +162,7 @@ export default async (app: FastifyInstance) => {
       sort: string
       filter: string
     }
-  }>('/sort/:params', async function({ query }, reply: FastifyReply) {
+  }>('/sort/:params', async function ({ query }, reply: FastifyReply) {
     let textQuery = ``
     const { sort, filter } = query
 
@@ -293,9 +293,9 @@ export default async (app: FastifyInstance) => {
       },
       preValidation: [app.authenticate]
     },
-    async function({ body, user })  {
+    async function ({ body, user }) {
       const { title, content, tags } = body
-      const { sub: userId } = user
+      const { id: userId } = user
       const query: QueryConfig = {
         text: `
           WITH cte1 AS
@@ -332,7 +332,9 @@ export default async (app: FastifyInstance) => {
             })
           )
         })
-        const { rows: [question] } = await app.pg.query<Question>(query)
+        const {
+          rows: [question]
+        } = await app.pg.query<Question>(query)
         return question
       } catch (e) {
         throw e

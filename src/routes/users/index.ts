@@ -195,30 +195,19 @@ export default async (app: FastifyInstance) => {
           200: {
             type: 'object',
             properties: {
-              user: {
-                type: 'object',
-                properties: {
-                  id: {
-                    type: 'integer'
-                  },
-                  email: {
-                    type: 'string'
-                  },
-                  displayName: {
-                    type: 'string'
-                  },
-                  picture: {
-                    type: 'string'
-                  },
-                  token: {
-                    type: 'string'
-                  }
-                }
+              id: {
+                type: 'integer'
               },
-              token: {
+              email: {
                 type: 'string'
               },
-              message: {
+              displayName: {
+                type: 'string'
+              },
+              picture: {
+                type: 'string'
+              },
+              token: {
                 type: 'string'
               }
             }

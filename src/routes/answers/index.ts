@@ -30,34 +30,33 @@ export default async (app: FastifyInstance) => {
       },
       preValidation: [app.authenticate]
     },
-    async function({ body, user }): Promise<Answer> {
+    async function ({ body, user }): Promise<Answer> {
       const { content, questionId } = body
-      const { sub: userId } = user
+      const { id: userId } = user
       const query: QueryConfig = {
         text: `
           WITH cte AS (
             INSERT INTO question_answer (content, "userId", "questionId")
               VALUES ($1, $2, $3)
-              RETURNING id, content, "creationTime", "userId", "questionId", "rawContent"
-          )
+              RETURNING id, content, "creationTime", "userId", "questionId", "rawContent")
           SELECT id,
                  content,
                  "creationTime",
                  "userId",
                  "questionId",
                  "rawContent",
-                 (
-                   SELECT "userId"
-                   FROM question q
-                   WHERE q.id = "questionId"
-                 ) AS "receiverId"
+                 (SELECT "userId"
+                  FROM question q
+                  WHERE q.id = "questionId") AS "receiverId"
           FROM cte
         `,
         values: [marked.parse(content), userId, questionId]
       }
 
       try {
-        const { rows: [{ receiverId, ...room }] } = await app.pg.query<Answer>(query)
+        const {
+          rows: [{ receiverId, ...room }]
+        } = await app.pg.query<Answer>(query)
 
         wss.clients.forEach((ws) => {
           // TODO: notify viewers of the question
@@ -100,7 +99,7 @@ export default async (app: FastifyInstance) => {
   app.put<{
     Params: {
       answerId: number
-    },
+    }
     Body: {
       questionId: number
     }
@@ -120,10 +119,10 @@ export default async (app: FastifyInstance) => {
       },
       onRequest: [app.authenticate]
     },
-    async function({ params, body, user }, reply: FastifyReply) {
+    async function ({ params, body, user }, reply: FastifyReply) {
       const { answerId } = params
       const { questionId } = body
-      const userId = Number(user.sub)
+      const userId = user.id
 
       const query: QueryConfig = {
         text: `
@@ -138,7 +137,10 @@ export default async (app: FastifyInstance) => {
       }
 
       try {
-        const { rows: [answer], rowCount } = await app.pg.query<Answer>(query)
+        const {
+          rows: [answer],
+          rowCount
+        } = await app.pg.query<Answer>(query)
         rowCount === 0 && reply.forbidden('You are not the owner of this question')
         return answer
       } catch (e) {
@@ -150,11 +152,7 @@ export default async (app: FastifyInstance) => {
   /**
    * Undoes an accept vote on the given answer. auth required
    */
-  app.post(
-    '/:answerId/accept/undo',
-    { onRequest: [app.authenticate] },
-    async () => {
-      return 'hello world!'
-    }
-  )
+  app.post('/:answerId/accept/undo', { onRequest: [app.authenticate] }, async () => {
+    return 'hello world!'
+  })
 }

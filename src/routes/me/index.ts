@@ -48,7 +48,7 @@ export default async (app: FastifyInstance) => {
       }
     },
     async function ({ user }, reply: FastifyReply): Promise<User> {
-      const { sub: userId } = user
+      const { id: userId } = user
       const query: QueryConfig = {
         text: `
           SELECT *

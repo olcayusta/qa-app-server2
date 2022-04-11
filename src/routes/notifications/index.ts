@@ -56,8 +56,8 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function({ user }): Promise<Notification[]> {
-      const userId = user.sub
+    async function ({ user }): Promise<Notification[]> {
+      const userId = user.id
       const query: QueryConfig = {
         text: `
           SELECT n.id,
@@ -65,13 +65,11 @@ export default async (app: FastifyInstance) => {
                  n.type,
                  n."creationTime",
                  n."isRead",
-                 (
-                   SELECT json_build_object(
-                            'id', id, 'displayName', "displayName", 'picture', picture
-                            )
-                   FROM "user" u
-                   WHERE u.id = n."senderId"
-                 ) AS "user"
+                 (SELECT json_build_object(
+                           'id', id, 'displayName', "displayName", 'picture', picture
+                           )
+                  FROM "user" u
+                  WHERE u.id = n."senderId") AS "user"
           FROM notification n
           WHERE n."receiverId" = $1
         `,
@@ -91,8 +89,8 @@ export default async (app: FastifyInstance) => {
     {
       onRequest: [app.authenticate]
     },
-    async function({ user }, reply: FastifyReply): Promise<{ unseenCount: number }> {
-      const { sub: userId } = user
+    async function ({ user }, reply: FastifyReply): Promise<{ unseenCount: number }> {
+      const userId = user.id
       const query: QueryConfig = {
         text: `
           SELECT COUNT(n.id)::INTEGER AS "unseenCount"
