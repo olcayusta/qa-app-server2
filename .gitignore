@@ -6,3 +6,6 @@
 
 # ENV
 /.env
+
+# Dist
+/dist
