@@ -14,7 +14,7 @@ export default async (app: FastifyInstance) => {
     {
       onRequest: [app.authenticate]
     },
-    async function({ body, user }, reply: FastifyReply): Promise<Comment> {
+    async function ({ body, user }, reply: FastifyReply): Promise<Comment> {
       const { content, questionId } = body
       const { sub } = user
       const userId = Number(sub)
@@ -30,7 +30,9 @@ export default async (app: FastifyInstance) => {
       }
 
       try {
-        const { rows: [comment] } = await app.pg.query<Comment>(query)
+        const {
+          rows: [comment]
+        } = await app.pg.query<Comment>(query)
         return comment
       } catch (e) {
         throw e

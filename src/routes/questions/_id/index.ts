@@ -77,7 +77,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function({ params }, reply: FastifyReply): Promise<Question> {
+    async function ({ params }, reply: FastifyReply): Promise<Question> {
       const { id: questionId } = params
       const query: QueryConfig = {
         text: `
@@ -102,7 +102,9 @@ export default async (app: FastifyInstance) => {
         values: [questionId]
       }
       try {
-        const { rows: [question] } = await app.pg.query<Question>(query)
+        const {
+          rows: [question]
+        } = await app.pg.query<Question>(query)
         return question ?? reply.notFound()
       } catch (e) {
         throw e

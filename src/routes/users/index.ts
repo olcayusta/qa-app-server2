@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifySchema } from 'fastify'
-import { QueryConfig } from 'pg'
 import { User } from '@shared/user.model'
+import { QueryConfig } from 'pg'
 
 const allUsersListResponseSchema: FastifySchema = {
   response: {
@@ -38,7 +38,7 @@ export default async (app: FastifyInstance) => {
     {
       schema: allUsersListResponseSchema
     },
-    async function(): Promise<User[]> {
+    async function (): Promise<User[]> {
       const queryText = `
         SELECT id,
                "displayName",
@@ -78,7 +78,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function({ body }, reply: FastifyReply): Promise<string> {
+    async function ({ body }, reply: FastifyReply): Promise<string> {
       const { email } = body
       const query: QueryConfig = {
         text: `
@@ -88,7 +88,9 @@ export default async (app: FastifyInstance) => {
         `,
         values: [email]
       }
-      const { rows: [user] } = await app.pg.query<User>(query)
+      const {
+        rows: [user]
+      } = await app.pg.query<User>(query)
       return user.displayName ?? reply.notFound()
     }
   )
@@ -146,7 +148,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function({ body }, reply: FastifyReply): Promise<User> {
+    async function ({ body }, reply: FastifyReply): Promise<User> {
       const { email, password, displayName, picture } = body
       const query: QueryConfig = {
         text: `
@@ -156,7 +158,9 @@ export default async (app: FastifyInstance) => {
         `,
         values: [email, password, displayName, picture]
       }
-      const { rows: [user] } = await app.pg.query<User>(query)
+      const {
+        rows: [user]
+      } = await app.pg.query<User>(query)
       return user ?? reply.notFound()
     }
   )
@@ -222,25 +226,29 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function({body}, reply: FastifyReply) {
+    async function ({ body }, reply: FastifyReply): Promise<User> {
       const { email, password } = body
       const query: QueryConfig = {
         text: `
-          SELECT id, email, "displayName", picture
+          SELECT id,
+                 email,
+                 "displayName",
+                 picture
           FROM "user"
           WHERE email = $1
             AND password = $2
         `,
         values: [email, password]
       }
-      const { rows } = await app.pg.query(query)
-      const user = rows[0] ?? reply.notFound()
+      const {
+        rows: [user]
+      } = await app.pg.query<User>(query)
 
-      const token = app.jwt.sign(user, {
+      user.token = app.jwt.sign(user, {
         sub: user.id.toString()
       })
-      user.token = token
-      return { user, token, message: 'create user successfully' }
+
+      return user ?? reply.notFound()
     }
   )
 }

@@ -1,8 +1,8 @@
 import { FastifyInstance, FastifyReply } from 'fastify'
+import { Answer } from '@shared/answer.model'
+import { QueryConfig } from 'pg'
 import { marked } from 'marked'
 import { rooms, wss } from '../../ws.server.js'
-import { QueryConfig } from 'pg'
-import { Answer } from '@shared/answer.model'
 
 export default async (app: FastifyInstance) => {
   app.post<{
@@ -57,14 +57,14 @@ export default async (app: FastifyInstance) => {
       }
 
       try {
-        const { rows: [{receiverId, ...room}] } = await app.pg.query<Answer>(query)
+        const { rows: [{ receiverId, ...room }] } = await app.pg.query<Answer>(query)
 
         wss.clients.forEach((ws) => {
-          // TODO: Soruyu okuyanlara bildirim gonder
-          if (rooms.has(`subscribe_${questionId}`) && rooms.get(`subscribe_${questionId}`)?.has(ws.id)) {
+          // TODO: notify viewers of the question
+          if (rooms.has(`q:${questionId}`) && rooms.get(`q:${questionId}`)?.has(ws.id)) {
             ws.send(
               JSON.stringify({
-                event: `subscribe_${questionId}`,
+                event: `q:${questionId}`,
                 payload: {
                   userId: receiverId,
                   questionId
@@ -73,7 +73,7 @@ export default async (app: FastifyInstance) => {
             )
           }
 
-          // FIXME: Send notification to answer owner
+          // TODO: send notification to question owner
           if (rooms.get(`u:${receiverId}`)?.has(ws.id)) {
             ws.send(
               JSON.stringify({

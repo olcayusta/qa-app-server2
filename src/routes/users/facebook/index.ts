@@ -1,13 +1,13 @@
 import { FastifyInstance } from 'fastify'
 
 export default async (app: FastifyInstance) => {
-	app.get('/', async function (request, reply) {
+	app.get('/', async function (req, reply) {
 		reply.redirect('http://localhost:4200/?=signin=true')
 		return 'Hello world!'
 	})
 
-	app.get('/callback', async function (request, reply) {
-		const token = await app.facebookOAuth2.getAccessTokenFromAuthorizationCodeFlow(request)
+	app.get('/callback', async function (req, reply) {
+		const token = await app.facebookOAuth2.getAccessTokenFromAuthorizationCodeFlow(req)
 
 		console.log(token.access_token)
 

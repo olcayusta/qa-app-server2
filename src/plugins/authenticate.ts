@@ -10,13 +10,14 @@ export default fp(async (app: FastifyInstance) => {
     }
   })
 
-  app.decorate('authenticate', async (req: FastifyRequest, reply: FastifyReply) => {
-    try {
-      await req.jwtVerify()
-    } catch (e) {
-      reply.send(e)
+  app.decorate(
+    'authenticate',
+    async (req: FastifyRequest, reply: FastifyReply) => {
+      try {
+        await req.jwtVerify()
+      } catch (e) {
+        reply.send(e)
+      }
     }
-  })
+  )
 })
-
-
