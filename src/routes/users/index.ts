@@ -48,8 +48,8 @@ export default async (app: FastifyInstance) => {
         ORDER BY id DESC
       `
       try {
-        const { rows } = await app.pg.query<User>(queryText)
-        return rows
+        const { rows: users } = await app.pg.query<User>(queryText)
+        return users
       } catch (e) {
         throw e
       }
@@ -82,7 +82,8 @@ export default async (app: FastifyInstance) => {
       const { email } = body
       const query: QueryConfig = {
         text: `
-          SELECT id, email
+          SELECT id,
+                 email
           FROM "user"
           WHERE email = $1
         `,
@@ -148,11 +149,11 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function ({ body }, reply: FastifyReply): Promise<User> {
-      const { email, password, displayName, picture } = body
+    async function ({ body: { email, password, picture, displayName } }, reply: FastifyReply): Promise<User> {
       const query: QueryConfig = {
         text: `
-          INSERT INTO "user" (email, password, "displayName", picture)
+          INSERT INTO "user"
+            (email, password, "displayName", picture)
           VALUES ($1, $2, $3, $4)
           RETURNING id, email, "displayName", picture
         `,
@@ -215,8 +216,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function ({ body }, reply: FastifyReply): Promise<User> {
-      const { email, password } = body
+    async function ({ body: { email, password } }, reply: FastifyReply): Promise<User> {
       const query: QueryConfig = {
         text: `
           SELECT id,
