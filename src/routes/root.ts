@@ -1,12 +1,8 @@
-import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify'
+import { FastifyInstance, FastifyPluginAsync } from 'fastify'
 import uaParser from 'ua-parser-js'
-import { Tag } from '@shared/tag.model'
-import { QueryConfig } from 'pg'
 
 const root: FastifyPluginAsync = async (app: FastifyInstance) => {
-
-
-  app.get('/', async function({ headers }) {
+  app.get('/', async function ({ headers }) {
     const ua = uaParser(headers['user-agent'])
     return {
       root: true,

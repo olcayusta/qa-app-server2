@@ -19,6 +19,7 @@
     "moduleResolution": "Node",
     "removeComments": true,
     "pretty": true,
+    "baseUrl": "./",
     "paths": {
       "@shared/*": [
         "src/models/*"
