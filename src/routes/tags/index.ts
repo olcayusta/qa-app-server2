@@ -20,7 +20,8 @@ export default async (app: FastifyInstance) => {
                   type: 'string'
                 },
                 description: {
-                  type: 'string'
+                  type: 'string',
+                  nullable: true
                 },
                 questionCount: {
                   type: 'number'
@@ -31,7 +32,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function(): Promise<Tag[]> {
+    async function (): Promise<Tag[]> {
       const sql2 = `
         SELECT t.id, t.title, t.description, COUNT(t.id) AS "questionCount"
         FROM tag t
@@ -82,7 +83,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function({ params }): Promise<Tag[]> {
+    async function ({ params }): Promise<Tag[]> {
       const { searchTerm } = params
       const query: QueryConfig = {
         text: `

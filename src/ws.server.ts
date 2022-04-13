@@ -2,11 +2,12 @@ import { WebSocket, WebSocketServer } from 'ws'
 import { nanoid } from 'nanoid'
 import { IncomingMessage } from 'http'
 
-export const sids: Map<string, Set<string>> = new Map() // adding "the-room" to the Set identified by the socket ID
-export const rooms: Map<string, Set<string>> = new Map() // adding the socket ID in the Set identified by the string "the-room"
+export const sids: Map<string, Set<string>> = new Map()
+export const rooms: Map<string, Set<string>> = new Map()
 
 class CustomWebSocket extends WebSocket {
   id: string = nanoid(8)
+  // odalar: Map<string, Set<string>>
 
   join(room: string) {
     this.joinSids(room)
