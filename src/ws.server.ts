@@ -7,17 +7,16 @@ export const rooms: Map<string, Set<string>> = new Map()
 
 class CustomWebSocket extends WebSocket {
   id: string = nanoid(8)
-  // odalar: Map<string, Set<string>>
 
   join(room: string) {
     this.joinSids(room)
 
-    if (!rooms.has(room)) {
-      rooms.set(room, new Set())
-      rooms.get(room)?.add(this.id)
+    if (!wss.odalar.has(room)) {
+      wss.odalar.set(room, new Set())
+      wss.odalar.get(room)?.add(this.id)
     }
 
-    rooms.get(room)?.add(this.id)
+    wss.odalar.get(room)?.add(this.id)
   }
 
   joinSids(room: string) {
@@ -31,11 +30,11 @@ class CustomWebSocket extends WebSocket {
 
   leave(room: string) {
     this.leaveSids(room)
-    if (rooms.has(room)) {
-      rooms.get(room)?.delete(this.id)
+    if (wss.odalar.has(room)) {
+      wss.odalar.get(room)?.delete(this.id)
 
-      if (!rooms.get(room)?.size) {
-        rooms.delete(room)
+      if (!wss.odalar.get(room)?.size) {
+        wss.odalar.delete(room)
       }
     }
   }
@@ -69,6 +68,8 @@ const wss: WebSocketServer = new WebSocketServer<CustomWebSocket>({
   WebSocket: CustomWebSocket
 })
 
+wss.odalar = new Map();
+
 wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any) => {
   ws.id = nanoid(8)
 
@@ -81,7 +82,7 @@ wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any
   } else {
     ws.join('users')
   }
-  console.log(rooms)
+  console.log(wss.odalar)
 
   // sids.set(ws.id, new Set().add('room1').add('room2'))
   // console.log(sids.get(ws.id))
@@ -97,7 +98,7 @@ wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any
     if (subscribe) {
       ws.join(subscribe)
       console.log('Subscribe to the room')
-      console.log(rooms)
+      console.log(wss.odalar)
     }
 
     if (unsubscribe) {
@@ -111,14 +112,14 @@ wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any
     ws.leave(`users`)
     ws.leave(`home`)
 
-    if (rooms.has('home')) {
-      rooms.get('home')?.delete(ws.id)
+    if (wss.odalar.has('home')) {
+      wss.odalar.get('home')?.delete(ws.id)
     }
 
     console.log(sids)
 
     console.log('Aktif soketler --- START')
-    console.log(rooms)
+    console.log(wss.odalar)
     console.log('Aktif soketler --- END')
     // console.log('socket is disconnect')
     /*		Object.keys(rooms).forEach((value, index) => {

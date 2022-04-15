@@ -12,7 +12,7 @@ declare module 'fastify' {
 
 declare module 'ws' {
   interface Server {
-    odalar: Set<string>
+    odalar: Map<string, Set<string>>
   }
 
   interface WebSocket {

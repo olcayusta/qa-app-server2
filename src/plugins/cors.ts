@@ -4,6 +4,6 @@ import fastifyCors, { FastifyCorsOptions } from 'fastify-cors'
 
 export default fp<FastifyCorsOptions>(async (fastify: FastifyInstance) => {
   fastify.register(fastifyCors, {
-    origin: 'http://localhost:4200'
+    origin: ['http://localhost:4200', 'http://localhost:3000']
   })
 })

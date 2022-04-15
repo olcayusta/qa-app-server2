@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyReply } from 'fastify'
 import { Answer } from '@shared/answer.model'
 import { QueryConfig } from 'pg'
 import { marked } from 'marked'
-import { rooms, wss } from '../../ws.server.js'
+import { wss } from '../../ws.server.js'
 
 export default async (app: FastifyInstance) => {
   app.post<{
@@ -60,7 +60,7 @@ export default async (app: FastifyInstance) => {
 
         wss.clients.forEach((ws) => {
           // TODO: notify viewers of the question
-          if (rooms.has(`q:${questionId}`) && rooms.get(`q:${questionId}`)?.has(ws.id)) {
+          if (wss.odalar.has(`q:${questionId}`) && wss.odalar.get(`q:${questionId}`)?.has(ws.id)) {
             ws.send(
               JSON.stringify({
                 event: `q:${questionId}`,
@@ -73,7 +73,7 @@ export default async (app: FastifyInstance) => {
           }
 
           // TODO: send notification to question owner
-          if (rooms.get(`u:${receiverId}`)?.has(ws.id)) {
+          if (wss.odalar.get(`u:${receiverId}`)?.has(ws.id)) {
             ws.send(
               JSON.stringify({
                 event: `new answer`,

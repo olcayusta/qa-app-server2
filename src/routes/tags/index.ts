@@ -1,12 +1,24 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyReply } from 'fastify'
 import { Tag } from '@shared/tag.model'
 import { QueryConfig } from 'pg'
 
 export default async (app: FastifyInstance) => {
-  app.get(
+  app.get<{
+    Querystring: {
+      q: string
+    }
+  }>(
     '/',
     {
       schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            q: {
+              type: 'string'
+            }
+          }
+        },
         response: {
           200: {
             type: 'array',
@@ -32,7 +44,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function (): Promise<Tag[]> {
+    async function(req): Promise<Tag[]> {
       const sql2 = `
         SELECT t.id, t.title, t.description, COUNT(t.id) AS "questionCount"
         FROM tag t
@@ -40,27 +52,62 @@ export default async (app: FastifyInstance) => {
         GROUP BY t.id
         ORDER BY "questionCount" DESC
       `
-      const queryText = `
-        SELECT t.id, t.title, t.description, count(sub.id) AS "questionCount"
-        FROM tag t
-               LEFT JOIN LATERAL (
-          SELECT q.id
-          FROM question q,
-               unnest(q.tags) etiket
-          WHERE etiket = t.id
-          ) AS sub ON TRUE
-        GROUP BY t.id
-        ORDER BY "questionCount" DESC
-        LIMIT 24
-      `
+      let query: QueryConfig = {
+        text: `
+          SELECT t.id, t.title, t.description, count(sub.id) AS "questionCount"
+          FROM tag t
+                 LEFT JOIN LATERAL (
+            SELECT q.id
+            FROM question q,
+                 unnest(q.tags) etiket
+            WHERE etiket = t.id
+            ) AS sub ON TRUE
+          GROUP BY t.id
+          ORDER BY "questionCount" DESC
+          LIMIT 24
+        `
+      }
+
+      if (req.query.q) {
+        const queryValue = `${req.query.q}:*`
+        query = {
+          text: `
+            SELECT *
+            FROM tag
+            WHERE to_tsvector(title) @@ to_tsquery($1)
+          `,
+          values: [queryValue]
+        }
+      }
+
       try {
-        const { rows: tags } = await app.pg.query<Tag>(queryText)
+        const { rows: tags } = await app.pg.query<Tag>(query)
         return tags
       } catch (e) {
         throw e
       }
     }
   )
+
+  /**
+   * Search
+   */
+  app.get<{
+    Querystring: {
+      q: string
+    }
+  }>('/:searchTerm', async function(req, res: FastifyReply): Promise<Tag[]> {
+    const query: QueryConfig = {
+      text: `
+        SELECT *
+        FROM tag
+        WHERE to_tsvector(title) @@ to_tsquery($1)
+      `,
+      values: [req.query.q]
+    }
+    const { rows: tags } = await app.pg.query<Tag>(query)
+    return tags
+  })
 
   /**
    * @api {get} /search/:searchTerm Get results by searchTerm
@@ -83,7 +130,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function ({ params }): Promise<Tag[]> {
+    async function({ params }): Promise<Tag[]> {
       const { searchTerm } = params
       const query: QueryConfig = {
         text: `
