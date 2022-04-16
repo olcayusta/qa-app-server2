@@ -1,3 +1,6 @@
+import { Comment } from "./comment.model"
+import { User } from "./user.model"
+
 export interface Answer {
   id: number
   content: string
@@ -6,4 +9,6 @@ export interface Answer {
   questionId: number
   rawContent: string
   receiverId?: number
+  user?: User
+  comments?: Comment[]
 }
