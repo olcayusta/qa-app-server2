@@ -37,8 +37,6 @@ app.server.on('upgrade', async (req: IncomingMessage, socket: Duplex, head: Buff
 try {
   const { PORT } = process.env
   await app.listen(PORT!)
-  console.log(`App listening on http://localhost:${PORT}`)
-  console.log('Press CTRL+C to quit.')
 } catch (err) {
   app.log.error(err)
   console.log(err)
