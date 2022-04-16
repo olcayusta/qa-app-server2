@@ -7,7 +7,6 @@ const allUsersListResponseSchema: FastifySchema = {
     200: {
       type: 'array',
       items: {
-        type: 'object',
         properties: {
           id: {
             type: 'integer'
@@ -28,10 +27,6 @@ const allUsersListResponseSchema: FastifySchema = {
   }
 }
 
-/**
- * Get all users from database
- * @param app
- */
 export default async (app: FastifyInstance) => {
   app.get(
     '/',
@@ -50,8 +45,8 @@ export default async (app: FastifyInstance) => {
       try {
         const { rows: users } = await app.pg.query<User>(queryText)
         return users
-      } catch (e) {
-        throw e
+      } catch (error) {
+        throw error
       }
     }
   )

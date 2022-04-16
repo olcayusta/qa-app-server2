@@ -12,7 +12,6 @@ export default async (app: FastifyInstance) => {
     {
       schema: {
         params: {
-          type: 'object',
           properties: {
             questionId: {
               type: 'integer'
@@ -21,7 +20,6 @@ export default async (app: FastifyInstance) => {
         },
         response: {
           200: {
-            type: 'object',
             properties: {
               id: {
                 type: 'integer'
@@ -46,7 +44,6 @@ export default async (app: FastifyInstance) => {
               tags: {
                 type: 'array',
                 items: {
-                  type: 'object',
                   properties: {
                     id: {
                       type: 'integer'
@@ -59,7 +56,6 @@ export default async (app: FastifyInstance) => {
                 nullable: true
               },
               user: {
-                type: 'object',
                 properties: {
                   id: {
                     type: 'integer'
@@ -102,9 +98,7 @@ export default async (app: FastifyInstance) => {
         values: [questionId]
       }
       try {
-        const {
-          rows: [question]
-        } = await app.pg.query<Question>(query)
+        const { rows: [question] } = await app.pg.query<Question>(query)
         return question ?? reply.notFound()
       } catch (e) {
         throw e

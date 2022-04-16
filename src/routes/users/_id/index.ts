@@ -13,7 +13,6 @@ const userSchema: FastifySchema = {
   },
   response: {
     200: {
-      type: 'object',
       properties: {
         id: {
           type: 'integer'
@@ -70,6 +69,7 @@ export default async (app: FastifyInstance) => {
         const { rows: [user] } = await app.pg.query<User>(query)
         return user ?? reply.notFound()
       } catch (e) {
+        console.error(e)
         throw e
       }
     }

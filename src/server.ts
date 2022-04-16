@@ -11,24 +11,16 @@ app.server.on('upgrade', async (req: IncomingMessage, socket: Duplex, head: Buff
   if (pathname === '/notification') {
     const protocol = headers['sec-websocket-protocol']
 
-    try {
-
-      const client: any = app.jwt.decode(protocol!)
-      // console.log(decocedToken);
-
-      wss.handleUpgrade(req, socket, head, (ws) => {
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      let client: any = {}
+      try {
+        client = app.jwt.decode(protocol!)
         const clientId = client.id
-        wss.emit('connection', ws, req, client)
-      })
-    } catch (error) {
-      /*			socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n')
-      socket.destroy()
-      return*/
-
-      wss.handleUpgrade(req, socket, head, (ws) => {
-        wss.emit('connection', ws, req, {})
-      })
-    }
+      } catch (error) {
+        throw error
+      }
+      wss.emit('connection', ws, req, client)
+    })
   } else {
     // socket.destroy()
   }
@@ -39,6 +31,5 @@ try {
   await app.listen(PORT!)
 } catch (err) {
   app.log.error(err)
-  console.log(err)
   process.exit(1)
 }

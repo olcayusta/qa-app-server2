@@ -1,9 +1,9 @@
 import { WebSocket, WebSocketServer } from 'ws'
 import { nanoid } from 'nanoid'
 import { IncomingMessage } from 'http'
+import { User } from '@shared/user.model'
 
 export const sids: Map<string, Set<string>> = new Map()
-export const rooms: Map<string, Set<string>> = new Map()
 
 class CustomWebSocket extends WebSocket {
   id: string = nanoid(8)
@@ -11,12 +11,12 @@ class CustomWebSocket extends WebSocket {
   join(room: string) {
     this.joinSids(room)
 
-    if (!wss.odalar.has(room)) {
-      wss.odalar.set(room, new Set())
-      wss.odalar.get(room)?.add(this.id)
+    if (!wss.rooms.has(room)) {
+      wss.rooms.set(room, new Set())
+      wss.rooms.get(room)?.add(this.id)
     }
 
-    wss.odalar.get(room)?.add(this.id)
+    wss.rooms.get(room)?.add(this.id)
   }
 
   joinSids(room: string) {
@@ -30,11 +30,11 @@ class CustomWebSocket extends WebSocket {
 
   leave(room: string) {
     this.leaveSids(room)
-    if (wss.odalar.has(room)) {
-      wss.odalar.get(room)?.delete(this.id)
+    if (wss.rooms.has(room)) {
+      wss.rooms.get(room)?.delete(this.id)
 
-      if (!wss.odalar.get(room)?.size) {
-        wss.odalar.delete(room)
+      if (!wss.rooms.get(room)?.size) {
+        wss.rooms.delete(room)
       }
     }
   }
@@ -51,11 +51,11 @@ class CustomWebSocket extends WebSocket {
 }
 
 /*class CustomWebSocketServer<T extends CustomWebSocket> extends WebSocketServer {
-  odalar: Set<string>
+  rooms: Set<string>
 }
 
 class CustomWebSocketServer extends WebSocketServer {
-  odalar: Set<string>
+  rooms: Set<string>
 }
 
 const wss: WebSocketServer = new CustomWebSocketServer({
@@ -68,9 +68,9 @@ const wss: WebSocketServer = new WebSocketServer<CustomWebSocket>({
   WebSocket: CustomWebSocket
 })
 
-wss.odalar = new Map();
+wss.rooms = new Map();
 
-wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any) => {
+wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: User) => {
   ws.id = nanoid(8)
 
   /**
@@ -82,7 +82,7 @@ wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any
   } else {
     ws.join('users')
   }
-  console.log(wss.odalar)
+  console.log(wss.rooms)
 
   // sids.set(ws.id, new Set().add('room1').add('room2'))
   // console.log(sids.get(ws.id))
@@ -98,7 +98,7 @@ wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any
     if (subscribe) {
       ws.join(subscribe)
       console.log('Subscribe to the room')
-      console.log(wss.odalar)
+      console.log(wss.rooms)
     }
 
     if (unsubscribe) {
@@ -112,14 +112,14 @@ wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: any
     ws.leave(`users`)
     ws.leave(`home`)
 
-    if (wss.odalar.has('home')) {
-      wss.odalar.get('home')?.delete(ws.id)
+    if (wss.rooms.has('home')) {
+      wss.rooms.get('home')?.delete(ws.id)
     }
 
     console.log(sids)
 
     console.log('Aktif soketler --- START')
-    console.log(wss.odalar)
+    console.log(wss.rooms)
     console.log('Aktif soketler --- END')
     // console.log('socket is disconnect')
     /*		Object.keys(rooms).forEach((value, index) => {

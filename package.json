@@ -28,7 +28,6 @@
     "fastify-postgres": "^3.6.0",
     "fastify-rate-limit": "^5.8.0",
     "fastify-sensible": "^3.1.2",
-    "jdenticon": "^3.1.1",
     "marked": "^4.0.14",
     "nanoid": "^3.3.2",
     "node-fetch": "^3.2.3",
@@ -40,7 +39,6 @@
     "ws": "^8.5.0"
   },
   "devDependencies": {
-    "@types/http-errors": "^1.8.2",
     "@types/marked": "^4.0.3",
     "@types/node": "^17.0.23",
     "@types/pg": "^8.6.5",
@@ -48,8 +46,12 @@
     "@types/ua-parser-js": "^0.7.36",
     "@types/web-push": "^3.3.2",
     "@types/ws": "^8.5.3",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/parser": "^5.19.0",
+    "eslint": "^8.13.0",
     "fastify-swagger": "^5.1.0",
     "nodemon": "^2.0.15",
+    "pino-pretty": "^7.6.1",
     "prettier": "^2.6.2",
     "typescript": "^4.6.3"
   }

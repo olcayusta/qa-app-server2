@@ -1,3 +1,5 @@
+import { Answer } from './answer.model'
+import { Comment } from './comment.model'
 import { User } from './user.model'
 
 export interface Question {
@@ -10,4 +12,6 @@ export interface Question {
   viewCount: number
   tags: number[]
   user: User
+  answers?: Answer[]
+  comments?: Comment[]
 }

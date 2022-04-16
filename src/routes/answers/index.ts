@@ -60,7 +60,7 @@ export default async (app: FastifyInstance) => {
 
         wss.clients.forEach((ws) => {
           // TODO: notify viewers of the question
-          if (wss.odalar.has(`q:${questionId}`) && wss.odalar.get(`q:${questionId}`)?.has(ws.id)) {
+          if (wss.rooms.has(`q:${questionId}`) && wss.rooms.get(`q:${questionId}`)?.has(ws.id)) {
             ws.send(
               JSON.stringify({
                 event: `q:${questionId}`,
@@ -73,7 +73,7 @@ export default async (app: FastifyInstance) => {
           }
 
           // TODO: send notification to question owner
-          if (wss.odalar.get(`u:${receiverId}`)?.has(ws.id)) {
+          if (wss.rooms.get(`u:${receiverId}`)?.has(ws.id)) {
             ws.send(
               JSON.stringify({
                 event: `new answer`,

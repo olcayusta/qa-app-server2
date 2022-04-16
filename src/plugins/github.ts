@@ -13,9 +13,7 @@ export default fp<FastifyOAuth2Options>(async (app: FastifyInstance) => {
       },
       auth: fastifyOauth2.GITHUB_CONFIGURATION
     },
-    // register a fastify url to start the redirect flow
     startRedirectPath: '/login/github',
-    // facebook redirect here after the user login
     callbackUri: 'http://localhost:9001/users/github/callback'
   })
 })

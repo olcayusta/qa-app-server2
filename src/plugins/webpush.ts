@@ -4,21 +4,21 @@ import webPush, { PushSubscription } from 'web-push'
 
 const subscriptions: PushSubscription[] = []
 
-export default fp(async (app: FastifyInstance) => {
+export default fp(async (fastify: FastifyInstance) => {
   webPush.setVapidDetails(
     'mailto:you@domain.com',
     process.env.PUBLIC_VAPID!,
     process.env.PRIVATE_VAPID!
   )
 
-  app.post<{
+  fastify.post<{
     Body: PushSubscription
-  }>('/subscription', async ({ body }) => {
+  }>('/subscription', async function({ body }) {
     subscriptions.push(body)
   })
 
-  app.get('/api/trigger-push-msg', async () => {
-    const notificationPayload = {
+  fastify.get('/api/trigger-push-msg', async function() {
+    const payload = {
       notification: {
         title: 'New Notification',
         body: 'This is the body of the notifications',
@@ -29,7 +29,7 @@ export default fp(async (app: FastifyInstance) => {
     for (let subscription of subscriptions) {
       await webPush.sendNotification(
         subscription,
-        JSON.stringify(notificationPayload)
+        JSON.stringify(payload)
       )
     }
 
