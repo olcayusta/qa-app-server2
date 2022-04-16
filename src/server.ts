@@ -11,14 +11,14 @@ app.server.on('upgrade', async (req: IncomingMessage, socket: Duplex, head: Buff
   if (pathname === '/notification') {
     const protocol = headers['sec-websocket-protocol']
 
+    let client: any = {}
+    try {
+      client = app.jwt.decode(protocol!)
+    } catch (error) {
+      throw error
+    }
+
     wss.handleUpgrade(req, socket, head, (ws) => {
-      let client: any = {}
-      try {
-        client = app.jwt.decode(protocol!)
-        const clientId = client.id
-      } catch (error) {
-        throw error
-      }
       wss.emit('connection', ws, req, client)
     })
   } else {
