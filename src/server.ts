@@ -5,25 +5,22 @@ import { Duplex } from 'stream'
 
 app.server.on('upgrade', async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
   const { url, headers } = req
+  // const { pathname } = new URL(url!, headers.origin)
 
-  const { pathname } = new URL(url!, headers.origin)
+  const protocol = headers['sec-websocket-protocol']
 
-  if (pathname === '/notification') {
-    const protocol = headers['sec-websocket-protocol']
-
-    let client: any = {}
-    try {
-      client = app.jwt.decode(protocol!)
-    } catch (error) {
-      throw error
-    }
-
-    wss.handleUpgrade(req, socket, head, (ws) => {
-      wss.emit('connection', ws, req, client)
-    })
-  } else {
-    // socket.destroy()
+  let client: any = {}
+  try {
+    await app.jwt.verify(protocol!)
+    client = app.jwt.decode(protocol!)
+  } catch (error) {
+    // FIXME: missing token
+    app.log.warn('FIXME: missing token')
   }
+
+  wss.handleUpgrade(req, socket, head, (ws) => {
+    wss.emit('connection', ws, req, client)
+  })
 })
 
 try {

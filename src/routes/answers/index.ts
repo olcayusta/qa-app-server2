@@ -30,7 +30,7 @@ export default async (app: FastifyInstance) => {
       },
       preValidation: [app.authenticate]
     },
-    async function ({ body, user }): Promise<Answer> {
+    async function({ body, user }): Promise<Answer> {
       const { content, questionId } = body
       const { id: userId } = user
       const query: QueryConfig = {
@@ -54,9 +54,7 @@ export default async (app: FastifyInstance) => {
       }
 
       try {
-        const {
-          rows: [{ receiverId, ...room }]
-        } = await app.pg.query<Answer>(query)
+        const { rows: [{ receiverId, ...room }] } = await app.pg.query<Answer>(query)
 
         wss.clients.forEach((ws) => {
           // TODO: notify viewers of the question
@@ -92,67 +90,4 @@ export default async (app: FastifyInstance) => {
       }
     }
   )
-
-  /**
-   * Casts an accept vote on the given answer. auth required
-   */
-  app.put<{
-    Params: {
-      answerId: number
-    }
-    Body: {
-      questionId: number
-    }
-  }>(
-    '/:answerId/accept',
-    {
-      schema: {
-        body: {
-          type: 'object',
-          required: ['questionId'],
-          properties: {
-            questionId: {
-              type: 'integer'
-            }
-          }
-        }
-      },
-      onRequest: [app.authenticate]
-    },
-    async function ({ params, body, user }, reply: FastifyReply) {
-      const { answerId } = params
-      const { questionId } = body
-      const userId = user.id
-
-      const query: QueryConfig = {
-        text: `
-          UPDATE question
-          SET "acceptedAnswerId"   = $1,
-              "acceptedAnswerTime" = NOW()
-          WHERE id = $2
-            AND "userId" = $3
-          RETURNING *
-        `,
-        values: [answerId, questionId, userId]
-      }
-
-      try {
-        const {
-          rows: [answer],
-          rowCount
-        } = await app.pg.query<Answer>(query)
-        rowCount === 0 && reply.forbidden('You are not the owner of this question')
-        return answer
-      } catch (e) {
-        throw e
-      }
-    }
-  )
-
-  /**
-   * Undoes an accept vote on the given answer. auth required
-   */
-  app.post('/:answerId/accept/undo', { onRequest: [app.authenticate] }, async () => {
-    return 'hello world!'
-  })
 }

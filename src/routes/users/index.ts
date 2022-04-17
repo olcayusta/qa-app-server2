@@ -33,7 +33,7 @@ export default async (app: FastifyInstance) => {
     {
       schema: allUsersListResponseSchema
     },
-    async function (): Promise<User[]> {
+    async function(): Promise<User[]> {
       const queryText = `
         SELECT id,
                "displayName",
@@ -45,8 +45,8 @@ export default async (app: FastifyInstance) => {
       try {
         const { rows: users } = await app.pg.query<User>(queryText)
         return users
-      } catch (error) {
-        throw error
+      } catch (e) {
+        throw e
       }
     }
   )
@@ -73,7 +73,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function ({ body }, reply: FastifyReply): Promise<string> {
+    async function({ body }, reply: FastifyReply): Promise<string> {
       const { email } = body
       const query: QueryConfig = {
         text: `
@@ -144,7 +144,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function ({ body: { email, password, picture, displayName } }, reply: FastifyReply): Promise<User> {
+    async function({ body: { email, password, picture, displayName } }, reply: FastifyReply): Promise<User> {
       const query: QueryConfig = {
         text: `
           INSERT INTO "user"
@@ -154,10 +154,12 @@ export default async (app: FastifyInstance) => {
         `,
         values: [email, password, displayName, picture]
       }
-      const {
-        rows: [user]
-      } = await app.pg.query<User>(query)
-      return user ?? reply.notFound()
+      try {
+        const { rows: [user] } = await app.pg.query<User>(query)
+        return user ?? reply.notFound()
+      } catch (e) {
+        throw e
+      }
     }
   )
 
@@ -211,7 +213,7 @@ export default async (app: FastifyInstance) => {
         }
       }
     },
-    async function ({ body: { email, password } }, reply: FastifyReply): Promise<User> {
+    async function({ body: { email, password } }, reply: FastifyReply): Promise<User> {
       const query: QueryConfig = {
         text: `
           SELECT id,

@@ -1,6 +1,6 @@
-import { WebSocket, WebSocketServer } from 'ws'
+import { ClientOptions, WebSocket, WebSocketServer } from 'ws'
 import { nanoid } from 'nanoid'
-import { IncomingMessage } from 'http'
+import { ClientRequestArgs, IncomingMessage } from 'http'
 import { User } from '@shared/user.model'
 
 export const sids: Map<string, Set<string>> = new Map()
@@ -71,7 +71,7 @@ const wss: WebSocketServer = new WebSocketServer<CustomWebSocket>({
 wss.rooms = new Map();
 
 wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: User) => {
-  ws.id = nanoid(8)
+  console.log(ws.id)
 
   /**
    * User join the room with user id
@@ -118,9 +118,7 @@ wss.on('connection', async (ws: WebSocket, request: IncomingMessage, client: Use
 
     console.log(sids)
 
-    console.log('Aktif soketler --- START')
     console.log(wss.rooms)
-    console.log('Aktif soketler --- END')
     // console.log('socket is disconnect')
     /*		Object.keys(rooms).forEach((value, index) => {
       const room = rooms[value]
