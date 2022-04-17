@@ -5,11 +5,15 @@ import webPush, { PushSubscription } from 'web-push'
 const subscriptions: PushSubscription[] = []
 
 export default fp(async (fastify: FastifyInstance) => {
-  webPush.setVapidDetails(
-    'mailto:you@domain.com',
-    process.env.PUBLIC_VAPID!,
-    process.env.PRIVATE_VAPID!
-  )
+  const PUBLIC_VAPID = process.env.PUBLIC_VAPID
+  const PRIVATE_VAPID = process.env.PRIVATE_VAPID
+  if (PUBLIC_VAPID && PRIVATE_VAPID) {
+    webPush.setVapidDetails(
+      'http://localhost:4200',
+      PUBLIC_VAPID,
+      PRIVATE_VAPID
+    )
+  }
 
   fastify.post<{
     Body: PushSubscription
@@ -26,7 +30,7 @@ export default fp(async (fastify: FastifyInstance) => {
       }
     }
 
-    for (let subscription of subscriptions) {
+    for (const subscription of subscriptions) {
       await webPush.sendNotification(
         subscription,
         JSON.stringify(payload)
