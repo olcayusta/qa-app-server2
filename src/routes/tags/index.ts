@@ -90,26 +90,6 @@ export default async (app: FastifyInstance) => {
   )
 
   /**
-   * Search
-   */
-  app.get<{
-    Querystring: {
-      q: string
-    }
-  }>('/:searchTerm', async function(req, res: FastifyReply): Promise<Tag[]> {
-    const query: QueryConfig = {
-      text: `
-        SELECT *
-        FROM tag
-        WHERE to_tsvector(title) @@ to_tsquery($1)
-      `,
-      values: [req.query.q]
-    }
-    const { rows: tags } = await app.pg.query<Tag>(query)
-    return tags
-  })
-
-  /**
    * @api {get} /search/:searchTerm Get results by searchTerm
    */
   app.get<{

@@ -4,9 +4,7 @@ import { IncomingMessage } from 'http'
 import { Duplex } from 'stream'
 
 app.server.on('upgrade', async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
-  const { url, headers } = req
-  // const { pathname } = new URL(url!, headers.origin)
-
+  const { headers } = req
   const protocol = headers['sec-websocket-protocol']
 
   let client: any = {}
@@ -25,7 +23,7 @@ app.server.on('upgrade', async (req: IncomingMessage, socket: Duplex, head: Buff
 
 try {
   const { PORT } = process.env
-  await app.listen(PORT!)
+  await app.listen(PORT!, '0.0.0.0')
 } catch (err) {
   app.log.error(err)
   process.exit(1)

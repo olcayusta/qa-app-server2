@@ -7,9 +7,7 @@ import { dirname, join } from 'path'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const app: FastifyInstance = fastify({
-  logger: {
-    prettyPrint: true
-  }
+  logger: true
 })
 
 /**
