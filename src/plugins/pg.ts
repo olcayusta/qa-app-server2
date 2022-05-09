@@ -1,6 +1,6 @@
 import fp from 'fastify-plugin'
 import { FastifyInstance } from 'fastify'
-import fastifyPostgres, { PostgresPluginOptions } from 'fastify-postgres'
+import fastifyPostgres, { PostgresPluginOptions } from '@fastify/postgres'
 
 export default fp<PostgresPluginOptions>(async (fastify: FastifyInstance) => {
   fastify.register(fastifyPostgres, {

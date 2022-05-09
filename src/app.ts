@@ -1,13 +1,16 @@
-import fastify, { FastifyInstance } from 'fastify'
-import fastifyEnv from 'fastify-env'
-import fastifyAutoload from 'fastify-autoload'
+import Fastify, { FastifyInstance } from 'fastify'
+
+import fastifyEnv from '@fastify/env'
+import fastifyAutoload from '@fastify/autoload'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-const app: FastifyInstance = fastify({
-  logger: true
+const app: FastifyInstance = Fastify({
+  logger: {
+    prettyPrint: true
+  }
 })
 
 /**

@@ -226,13 +226,13 @@ export default async (app: FastifyInstance) => {
         `,
         values: [email, password]
       }
-      const {
-        rows: [user]
-      } = await app.pg.query<User>(query)
+      const { rows: [user] } = await app.pg.query<User>(query)
 
-      user.token = app.jwt.sign(user, {
-        sub: user.id.toString()
-      })
+      if (user) {
+        user.token = app.jwt.sign(user, {
+          sub: user.id.toString()
+        })
+      }
 
       return user ?? reply.notFound()
     }

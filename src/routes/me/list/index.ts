@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { FastifyJWT } from 'fastify-jwt'
+import { FastifyJWT } from '@fastify/jwt'
 
 export default async (app: FastifyInstance) => {
   app.get(

@@ -1,5 +1,5 @@
 import 'fastify'
-import { OAuth2Namespace } from 'fastify-oauth2'
+import { OAuth2Namespace } from '@fastify/oauth2'
 import { User } from '@shared/user.model'
 
 declare module 'fastify' {
@@ -24,7 +24,7 @@ declare module 'ws' {
   }
 }
 
-declare module 'fastify-jwt' {
+declare module '@fastify/jwt' {
   interface FastifyJWT {
     payload: {
       readonly id: number

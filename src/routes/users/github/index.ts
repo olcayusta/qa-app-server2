@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import fastifyCookie from '@fastify/cookie'
 
 interface GithubUser {
   name: string
@@ -9,8 +10,17 @@ interface GithubUser {
 }
 
 export default async (app: FastifyInstance) => {
+  app.register(fastifyCookie, {
+    secret: 'my-secret',
+    parseOptions: {}
+  })
+
   app.get('/', async function (req: FastifyRequest, reply: FastifyReply) {
-    reply.redirect('http://localhost:4200/?=signin=true')
+    // reply.redirect('http://localhost:4200/?=signin=true')
+    reply.setCookie('foo', 'bar', {
+      domain: 'localhost',
+      path: '/'
+    }).redirect('http://localhost:4200/?=signin=true')
   })
 
   app.get('/callback', async function (req: FastifyRequest, reply: FastifyReply) {
