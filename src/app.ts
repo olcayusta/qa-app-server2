@@ -1,5 +1,4 @@
 import Fastify, { FastifyInstance } from 'fastify'
-
 import fastifyEnv from '@fastify/env'
 import fastifyAutoload from '@fastify/autoload'
 import { fileURLToPath } from 'url'
