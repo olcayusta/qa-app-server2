@@ -10,7 +10,7 @@ app.server.on('upgrade', async (req: IncomingMessage, socket: Duplex, head: Buff
   let client: any = {}
   try {
     await app.jwt.verify(protocol!)
-    client = app.jwt.decode(protocol!)
+    client = app.jwt.decode(protocol!)!
   } catch (error) {
     // FIXME: missing token
     app.log.warn('FIXME: missing token')
@@ -23,7 +23,11 @@ app.server.on('upgrade', async (req: IncomingMessage, socket: Duplex, head: Buff
 
 try {
   const { PORT } = process.env
-  await app.listen(PORT!, '0.0.0.0')
+  await app.listen({
+    port: Number(PORT),
+    host: '0.0.0.0'
+  })
+
 } catch (err) {
   app.log.error(err)
   process.exit(1)

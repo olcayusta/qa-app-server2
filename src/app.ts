@@ -8,7 +8,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const app: FastifyInstance = Fastify({
   logger: {
-    prettyPrint: true
+    transport: {
+      target: 'pino-pretty'
+    }
   }
 })
 
