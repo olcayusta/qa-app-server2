@@ -1,3 +1,3 @@
-# İnek.dev Node.js Server (Preview)
+# Node.js Typescript Server (Önizleme)
 
 Minimal, REST API ve WebSocket sunucusu.
