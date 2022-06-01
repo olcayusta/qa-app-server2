@@ -1,6 +1,6 @@
-import sharp from 'sharp'
-import fetch from 'node-fetch'
 import { FastifyInstance } from 'fastify'
+import fetch from 'node-fetch'
+import sharp from 'sharp'
 
 export default async (app: FastifyInstance) => {
   app.get<{
