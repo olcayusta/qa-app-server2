@@ -24,7 +24,7 @@ export default async (app: FastifyInstance) => {
   })
 
   app.get('/callback', async function (req: FastifyRequest, reply: FastifyReply) {
-    const token = await app.githubOAuth2.getAccessTokenFromAuthorizationCodeFlow(req)
+    const {token} = await app.githubOAuth2.getAccessTokenFromAuthorizationCodeFlow(req)
 
     const authorizationEndpoint = app.githubOAuth2.generateAuthorizationUri(req)
     console.log(authorizationEndpoint)

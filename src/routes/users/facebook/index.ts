@@ -9,7 +9,8 @@ export default async (app: FastifyInstance) => {
 	app.get('/callback', async function (req: FastifyRequest, reply: FastifyReply) {
 		const token = await app.facebookOAuth2.getAccessTokenFromAuthorizationCodeFlow(req)
 
-		console.log(token.access_token)
+    console.log(token)
+		// console.log(token.access_token)
 
 		reply.redirect('/users/facebook')
 	})
