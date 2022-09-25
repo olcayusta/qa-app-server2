@@ -7,6 +7,7 @@ const allUsersListResponseSchema: FastifySchema = {
     200: {
       type: 'array',
       items: {
+        type: 'object',
         properties: {
           id: {
             type: 'integer'
