@@ -19,4 +19,21 @@ export default async (app: FastifyInstance) => {
       .toFile('public/image.webp')
     return { status: 200 }
   })
+
+  app.get('/manual', async function() {
+    await sharp('sharp.avif')
+      .resize({
+        width: 192,
+        height: 192,
+        fit: 'cover'
+      }).webp({
+        quality: 70
+      })
+      .toFile('girl.webp')
+
+    return {
+      sucess: 'ok'
+    }
+  })
 }
+

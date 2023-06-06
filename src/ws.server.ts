@@ -7,7 +7,6 @@ export const sids: Map<string, Set<string>> = new Map()
 
 class CustomWebSocket extends WebSocket {
   id: string = nanoid(8)
-
   join(room: string) {
     this.joinSids(room)
 

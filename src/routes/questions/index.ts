@@ -325,7 +325,7 @@ export default async (app: FastifyInstance) => {
         wss.clients.forEach((client) => {
           client.send(
             JSON.stringify({
-              event: 'new_question',
+              event: 'new question',
               payload: {
                 id: 101
               }
