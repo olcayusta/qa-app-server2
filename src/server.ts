@@ -9,7 +9,7 @@ app.server.on('upgrade', async (req: IncomingMessage, socket: Duplex, head: Buff
 
   let client: any = {}
   try {
-    await app.jwt.verify(protocol!)
+    app.jwt.verify(protocol!)
     client = app.jwt.decode(protocol!)!
   } catch (error) {
     // FIXME: missing token

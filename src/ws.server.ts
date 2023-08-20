@@ -62,7 +62,7 @@ const wss: WebSocketServer = new CustomWebSocketServer({
   WebSocket: CustomWebSocket
 })*/
 
-const wss: WebSocketServer = new WebSocketServer<CustomWebSocket>({
+const wss = new WebSocketServer({
   noServer: true,
   WebSocket: CustomWebSocket
 })

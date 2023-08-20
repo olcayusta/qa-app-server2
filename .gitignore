@@ -5,7 +5,7 @@
 /.idea
 
 # ENV
-/.env
+/..env
 
 # Dist
 /dist
