@@ -21,6 +21,9 @@ const allUsersListResponseSchema: FastifySchema = {
           signupDate: {
             type: 'string',
             format: 'date-time'
+          },
+          isVerified: {
+            type: 'boolean'
           }
         }
       }
@@ -39,7 +42,8 @@ export default async (app: FastifyInstance) => {
         SELECT id,
                "displayName",
                picture,
-               "signupDate"
+               "signupDate",
+               "isVerified"
         FROM "user"
         ORDER BY id DESC
       `

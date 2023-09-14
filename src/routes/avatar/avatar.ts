@@ -15,8 +15,8 @@ export default async (app: FastifyInstance) => {
                 <svg viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'>
                     <defs>
                         <linearGradient id='gradient' x1='0' y1='0' x2='0' y2='1'>
-                            <stop stop-color='#6200ee' offset='0'/>
-                            <stop stop-color='#6200ee' offset='1'/>
+                            <stop stop-color='#606060' offset='0'/>
+                            <stop stop-color='#212121' offset='1'/>
                         </linearGradient>
                     </defs>
                     <g>
@@ -24,7 +24,7 @@ export default async (app: FastifyInstance) => {
                               x='0' y='0' width='40' height='40'
                               rx='0' ry='0'/>
                         <text x='50%' y='50%' text-anchor='middle' dominant-baseline='central'
-                              font-family='Archivo, Arial, Helvetica, sans-serif'
+                              font-family='Archivo, Helvetica, sans-serif'
                               font-weight='500'
                               font-size='16px'
                               letter-spacing='1'

@@ -65,6 +65,9 @@ export default async (app: FastifyInstance) => {
                   },
                   picture: {
                     type: 'string'
+                  },
+                  isVerified: {
+                    type: 'boolean'
                   }
                 }
               }
@@ -89,7 +92,7 @@ export default async (app: FastifyInstance) => {
                  cte."acceptedAnswerId",
                  cte.tags,
                  (
-                   SELECT json_build_object('id', id, 'displayName', "displayName", 'picture', picture)
+                   SELECT json_build_object('id', id, 'displayName', "displayName", 'picture', picture, 'isVerified', "isVerified")
                    FROM "user" u
                    WHERE u.id = cte."userId"
                  ) AS "user"

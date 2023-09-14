@@ -29,7 +29,7 @@
     "fastify": "^4.21.0",
     "fastify-plugin": "^4.5.1",
     "lowdb": "^6.0.1",
-    "marked": "^7.0.3",
+    "marked": "^7.0.4",
     "nanoid": "^4.0.2",
     "ncu": "^0.2.1",
     "node-fetch": "^3.3.2",

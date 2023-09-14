@@ -23,6 +23,9 @@ const userSchema: FastifySchema = {
         picture: {
           type: 'string'
         },
+        isVerified: {
+          type: 'boolean'
+        },
         signupDate: {
           type: 'string',
           format: 'date-time'
@@ -58,7 +61,7 @@ export default async (app: FastifyInstance) => {
       const { id: userId } = params
       const query: QueryConfig = {
         text: `
-          SELECT id, "displayName", picture, "signupDate", "lastSeenTime", "githubUrl", "twitterUrl"
+          SELECT id, "displayName", picture, "isVerified", "signupDate", "lastSeenTime", "githubUrl", "twitterUrl"
           FROM "user"
           WHERE id = $1
         `,
